@@ -3,6 +3,8 @@
 $:.insert(0, 'lib')
 
 require 'thor'
+require 'rly'
+require 'pry'
 require 'parser.rb'
 require 'lexer.rb'
 
@@ -12,17 +14,13 @@ module Mm2ep
     class ParseCli < Thor
       desc 'parse INFILE', 'Parse INFILE into tokens'
       def parse(infile)
-        parser = Parser.new
+
         File.open(infile).each_line do |line|
-          parser.parse(line)
+          parser = Parser.new(Lexer.new)
+          token = parser.parse(line.chomp)
+          puts token
         end
       end
-        desc 'lexer ', 'Lexe into tokens'
-        def lexer()
-          truc = Lexer.new
-          truc.validate ['VAR', 'SPACE']
-        end
-
     end
   end
 end

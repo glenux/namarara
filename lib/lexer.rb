@@ -1,23 +1,24 @@
 module Mm2ep
   module Depend
-    class Lexer
-      attr_reader :expr
+    class Lexer < Rly::Lex
 
-      BOOL_EXPR = ['T_BOOL', 'F_BOOL']
-      START_EXPR = ['VAR', 'BOOL_EXPR','NOT_OP', 'EXPR', 'L_PAR']
+      token :L_PAR, /\(/
+      token :NUMBER, /[0-9]+(\.[0-9]+)?/
+      token :STRING, /"[^"]*"/
+      token :EQ_OP, /\=/
+      token :T_BOOL, /[tT]rue/
+      token :F_BOOL, /[fF]alse/
+      token :VAR, /[a-z][a-zA-Z0-9_]+/
+      token :AND_OP, /AND/
+      token :OR_OP, /OR/
+      token :NOT_OP, /NOT/
+      token :SPACE, /\s+/
+      token :R_PAR, /\)/
 
-      def initialize
-        @expr = []
-      end
-
-      def validate_space
-      end
-
-      def validate tokens
-        if START_EXPR.include? tokens[0]
-          @expr << tokens[0]
-          tokens = tokens.drop(1)
-        end
+      on_error do |t|
+        puts "Illegal character #{t.value}"
+        t.lexer.pos += 1
+        nil
       end
 
     end # class
