@@ -37,27 +37,6 @@ module Mm2ep
         ex.value = "#{v.value} #{s.value} #{eq.value} #{s.value} #{n.value}"
       end
 
-      # lexer do
-      #
-      # end
-      #
-      # def initialize
-      #   @tokens = []
-      # end
-      #
-      # def parse s
-      #   s = s.split(' ')
-      #   s.each_with_index do |element, idx|
-      #     TOKEN.each do |token, regex|
-      #       next if element.sub!(regex, '').nil?
-      #       @tokens << token
-      #       break if element.nil?
-      #     end
-      #     @tokens <<'SPACE' unless idx == s.length-1
-      #   end
-      #   puts @tokens
-      # end # def
-
     end # class
   end # module
 end # module
