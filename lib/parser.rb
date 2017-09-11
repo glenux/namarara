@@ -2,8 +2,23 @@ module Mm2ep
   module Depend
     class Parser < Rly::Yacc
 
+      precedence :left,  'OR_OP', 'EQ_OP'
+      precedence :right,  'AND_OP', 'NOT_OP'
+
       rule 'statement : expr' do |st, e|
         st.value = e.value
+      end
+
+      rule 'expr : VAR' do |ex, l|
+        ex.value = l.value
+      end
+
+      rule 'expr : T_BOOL' do |ex, l|
+        ex.value = l.value
+      end
+
+      rule 'expr : F_BOOL' do |ex, l|
+        ex.value = l.value
       end
 
       rule 'expr : NOT_OP SPACE expr' do |ex, l, s, e|
