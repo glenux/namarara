@@ -26,6 +26,7 @@ module Mm2ep
         @atteint = false
       end
 
+      #
       def try_expr
         @truc = Hash[@truc.sort_by { |key, value| value.length }.reverse!]
         @truc.each do |_, value|
@@ -57,13 +58,13 @@ module Mm2ep
         @fait = false
         try_expr
         # binding.pry
-        if !fait && @i < @tokens.size-1
+        if !@fait && @i < @tokens.size-1
           if !@atteint || (!@tokens[@i].eql?('OR_OP') && !@tokens[@i].eql?('AND_OP'))
             move_forward
           else
             move_backwards
           end
-        elsif !fait
+        elsif !@fait
           move_backwards
         end
       end

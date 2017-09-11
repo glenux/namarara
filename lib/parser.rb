@@ -1,5 +1,53 @@
 module Mm2ep
   module Depend
+    class And_op
+      attr_reader :expr1, :expr2
+      def initialize expr1, expr2
+        @expr1 = expr1
+        @expr2 = expr2
+      end
+
+      def and_op
+        return expr1 && expr2
+      end
+    end
+
+    class Or_op
+      attr_reader :expr1, :expr2
+      def initialize expr1, expr2
+        @expr1 = expr1
+        @expr2 = expr2
+      end
+
+      def or_op
+        return expr1 || expr2
+      end
+    end
+
+    class Not_op
+      attr_reader :expr
+      def initialize expr
+        @expr = expr
+      end
+
+      def not_op
+        return true unless expr == true
+        return false
+      end
+    end
+
+    class Eq_op
+      attr_reader :val, :other
+      def initialize val, other
+        @val = val
+        @other = other
+      end
+
+      def eq_op
+        return val = other
+      end
+    end
+
     class Parser < Rly::Yacc
 
       precedence :left,  'OR_OP', 'EQ_OP'
@@ -22,34 +70,34 @@ module Mm2ep
       end
 
       rule 'expr : NOT_OP SPACE expr' do |ex, l, s, e|
-        ex.value = "#{l.value} #{s.value} #{e.value}"
+        ex.value = Not_op.new(e).not_op
       end
 
       rule 'expr : expr SPACE AND_OP SPACE expr' do |ex, l, s, e, sp, r|
-        ex.value = "#{l.value} #{s.value} #{e.value} #{sp.value} #{r.value}"
+        ex.value = And_op.new(l, r).and_op
       end
 
       rule 'expr : expr SPACE OR_OP SPACE expr' do |ex, l, s, e, sp, r|
-        ex.value = "#{l.value} #{s.value} #{e.value} #{sp.value} #{r.value}"
+        ex.value = Or_op.new(l, r).or_op
       end
       rule 'expr : L_PAR SPACE expr SPACE R_PAR' do |ex, l, s, e, sp, r|
-        ex.value = "#{l.value} #{s.value} #{e.value} #{sp.value} #{r.value}"
+        ex.value = e.value
       end
 
       rule 'expr : VAR SPACE EQ_OP SPACE F_BOOL' do |ex, v, s, eq, _, n|
-        ex.value = "#{v.value} #{s.value} #{eq.value} #{s.value} #{n.value}"
+        ex.value = Eq_op.new(v, n).eq_op
       end
 
       rule 'expr : VAR SPACE EQ_OP SPACE T_BOOL' do |ex, v, s, eq, _, n|
-        ex.value = "#{v.value} #{s.value} #{eq.value} #{s.value} #{n.value}"
+        ex.value = Eq_op.new(v, n).eq_op
       end
 
       rule 'expr : VAR SPACE EQ_OP SPACE STRING' do |ex, v, s, eq, _, n|
-        ex.value = "#{v.value} #{s.value} #{eq.value} #{s.value} #{n.value}"
+        ex.value = Eq_op.new(v, n).eq_op
       end
 
       rule 'expr : VAR SPACE EQ_OP SPACE NUMBER' do |ex, v, s, eq, _, n|
-        ex.value = "#{v.value} #{s.value} #{eq.value} #{s.value} #{n.value}"
+        ex.value = Eq_op.new(v, n).eq_op
       end
 
     end # class
