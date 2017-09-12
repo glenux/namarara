@@ -1,31 +1,37 @@
 module Mm2ep
   module Depend
-    class Treenode 
-      def initialize 
-      end 
-
-      # c
+    class TreeExpr 
       def compute 
         raise NotImplementedError 
       end 
     end 
 
-    class VarExpr < Treenode 
+    class TreeValue
+      attr_accessor :value
+    end 
+
+    class VarValue < TreeValue
+      attr_accessor :value 
+
       def initialize str 
         @name = str
         @value = nil 
       end 
 
-      def set value 
-        @value = value
-      end 
-
       def compute
+        # FIXME: test if @value is a boolean 
+        # raise an exception in all other cases
         @value 
       end 
     end 
 
-    class BoolExpr < Treenode 
+    class NumberValue < TreeValue
+    end 
+
+    class StringValue < TreeValue
+    end 
+
+    class BoolValue < TreeValue
       def initialize str 
         @value = case str 
                  when /true/i then true 
@@ -39,7 +45,7 @@ module Mm2ep
       end 
     end 
 
-    class AndOp < Treenode
+    class AndOp < TreeExpr
       attr_reader :expr1, :expr2
       def initialize expr1, expr2
           @expr1 = expr1 
@@ -72,7 +78,7 @@ module Mm2ep
       end
     end
 
-    class Not_op
+    class NotOp
       attr_reader :expr
       def initialize expr
         @expr = expr
@@ -87,17 +93,11 @@ module Mm2ep
 
     class EqOp
       attr_reader :val, :other
-      def initialize val, other
-        @val = val.value.to_s
-        unless other.value.to_s.match(/true/).nil?
-          @other = true
-        else
-          @other = false
-        end
+      def initialize var, value
       end
 
       def compute
-        return if val == @other
+        return if val.value == @other.value
       end
     end
 
@@ -111,7 +111,10 @@ module Mm2ep
       end
 
       rule 'expr : VAR' do |ex, l|
-        ex.value = VarExpr.new(l.value)
+        ex.value = EqOp.new(
+          VarExpr.new(l.value), 
+          BoolValue.new('true')
+        )
       end
 
       rule 'expr : T_BOOL' do |ex, l|
@@ -123,7 +126,7 @@ module Mm2ep
       end
 
       rule 'expr : NOT_OP SPACE expr' do |ex, l, s, e|
-        ex.value = Not_op.new(e.value)
+        ex.value = NotOp.new(e.value)
       end
 
       rule 'expr : expr SPACE AND_OP SPACE expr' do |ex, l, s, e, sp, r|
