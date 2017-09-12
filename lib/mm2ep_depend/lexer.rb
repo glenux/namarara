@@ -3,6 +3,7 @@ module Mm2ep
     class Lexer < Rly::Lex
 
       token :L_PAR, /\(/
+      token :R_PAR, /\)/
       token :NUMBER, /[0-9]+(\.[0-9]+)?/
       token :STRING, /"[^"]*"/
       token :EQ_OP, /\=/
@@ -12,8 +13,7 @@ module Mm2ep
       token :AND_OP, /AND/
       token :OR_OP, /OR/
       token :NOT_OP, /NOT/
-      token :SPACE, /\s*/
-      token :R_PAR, /\)/
+      token :SPACE, /\s+/
 
       on_error do |t|
         puts "Illegal character #{t.value}"
