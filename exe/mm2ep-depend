@@ -5,10 +5,7 @@ $:.insert(0, 'lib')
 require 'thor'
 require 'rly'
 require 'pry'
-require 'parser.rb'
-require 'lexer.rb'
-require 'lexer2.rb'
-require 'parser2.rb'
+require 'mm2ep_depend'
 
 module Mm2ep
   module Depend
@@ -21,6 +18,8 @@ module Mm2ep
           puts line.inspect
           token = parser.parse(line.chomp, true)
           puts token
+          # puts false && true
+          # puts false || false
           # binding.pry
           # parser = Parser2.new
           # lexer = TestLexer.new(parser.parse(line))
