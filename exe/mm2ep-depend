@@ -19,7 +19,8 @@ module Mm2ep
         puts line.inspect
         token = parser.parse(line.chomp, true)
         pp token
-        puts token.to_s
+        puts "RAW : #{line}"
+        puts "EVAL: #{token.to_s}"
         # puts false && true
         # puts false || false
         # binding.pry
