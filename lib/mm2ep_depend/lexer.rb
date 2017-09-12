@@ -8,7 +8,11 @@ module Mm2ep
       token :L_PAR, /\(/
       token :R_PAR, /\)/
       token :NUMBER, /[0-9]+(\.[0-9]+)?/
-      token :STRING, /"[^"]*"/
+      token :STRING, /"([^"]*)"/ do |s|
+        s.value.gsub!(/"(.*)"/,'\1')
+        s
+      end
+
       token :EQ_OP, /\=/
       token :T_BOOL, /true/i
       token :F_BOOL, /false/i

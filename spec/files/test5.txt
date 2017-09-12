@@ -1,1 +1,2 @@
-truc bidule
+
+( a_girl_has_no_name = true ) AND ( character = "Arya Stark" )
