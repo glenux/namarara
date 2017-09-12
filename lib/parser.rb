@@ -31,7 +31,8 @@ module Mm2ep
       end
 
       def not_op
-        return true unless expr == true
+        # binding.pry
+        return true unless expr.value.to_s.eql? 'true'
         return false
       end
     end
