@@ -16,7 +16,7 @@ module Mm2ep
       end
 
       def and_op
-        binding.pry
+        # binding.pry
         return @expr1 && @expr2
       end
     end
@@ -58,7 +58,7 @@ module Mm2ep
       attr_reader :val, :other
       def initialize val, other
         @val = val.value.to_s
-        if other.value.to_s.match(/true/).nil?
+        unless other.value.to_s.match(/true/).nil?
           @other = true
         else
           @other = false
@@ -66,7 +66,7 @@ module Mm2ep
       end
 
       def eq_op
-        return val = @other
+        return if val == @other
       end
     end
 
