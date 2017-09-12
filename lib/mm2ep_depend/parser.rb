@@ -149,10 +149,6 @@ module Mm2ep
         ex.value = BoolValue.new(l.value.to_s)
       end
 
-      rule 'expr : NOT_OP expr %prec UMINUS' do |ex, l, e|
-        ex.value = NotOp.new(e.value)
-      end
-
       rule 'expr : expr OR_OP expr' do |ex, l, e, r|
         ex.value = OrOp.new(l.value, r.value)
       end
@@ -163,6 +159,10 @@ module Mm2ep
 
       rule 'expr : L_PAR expr R_PAR' do |ex, l, e, r|
         ex.value = e.value
+      end
+
+      rule 'expr : NOT_OP expr %prec UMINUS' do |ex, l, e|
+        ex.value = NotOp.new(e.value)
       end
 
       rule 'expr : VAR EQ_OP F_BOOL' do |ex, v, eq, n|
