@@ -14,19 +14,18 @@ module Mm2ep
     class ParseCli < Thor
       desc 'parse INFILE', 'Parse INFILE into tokens'
       def parse(infile)
-        File.open(infile).each_line do |line|
-          parser = Parser.new(Lexer.new)
-          puts line.inspect
-          token = parser.parse(line.chomp, true)
-          pp token
-          puts token.to_s
-          # puts false && true
-          # puts false || false
-          # binding.pry
-          # parser = Parser2.new
-          # lexer = TestLexer.new(parser.parse(line))
-          # puts lexer.testlexe
-        end
+        line = File.read(infile).gsub(/\n/,'')
+        parser = Parser.new(Lexer.new)
+        puts line.inspect
+        token = parser.parse(line.chomp, true)
+        pp token
+        puts token.to_s
+        # puts false && true
+        # puts false || false
+        # binding.pry
+        # parser = Parser2.new
+        # lexer = TestLexer.new(parser.parse(line))
+        # puts lexer.testlexe
       end
     end
   end
