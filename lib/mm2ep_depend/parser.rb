@@ -140,11 +140,15 @@ module Mm2ep
         )
       end
 
-      rule 'expr : T_BOOL' do |ex, l|
-        ex.value = BoolValue.new(l.value.to_s)
+      rule 'bool_expr : F_BOOL'do |ex, l|
+        ex.value = l.value
       end
 
-      rule 'expr : F_BOOL' do |ex, l|
+      rule 'bool_expr : T_BOOL'do |ex, l|
+        ex.value = l.value
+      end
+
+      rule 'expr : bool_expr' do |ex, l|
         ex.value = BoolValue.new(l.value.to_s)
       end
 
@@ -163,14 +167,7 @@ module Mm2ep
         ex.value = e.value
       end
 
-      rule 'expr : VAR EQ_OP F_BOOL' do |ex, v, eq, n|
-        ex.value = EqOp.new(
-          VarValue.new(v.value.to_s),
-          BoolValue.new(n.value)
-        )
-      end
-
-      rule 'expr : VAR EQ_OP T_BOOL' do |ex, v, eq, n|
+      rule 'expr : VAR EQ_OP bool_expr' do |ex, v, eq, n|
         ex.value = EqOp.new(
           VarValue.new(v.value.to_s),
           BoolValue.new(n.value)
