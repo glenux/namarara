@@ -124,10 +124,10 @@ module Mm2ep
 
     class Parser < Rly::Yacc
 
-      precedence :left, 'OR_OP'
-      precedence :left, 'AND_OP'
-      precedence :left, 'EQ_OP'
-      precedence :left, 'L_PAR', 'R_PAR'
+      precedence :left, :OR_OP
+      precedence :left, :AND_OP
+      precedence :left, :EQ_OP
+      precedence :right, :L_PAR, :R_PAR
       precedence :right, :UMINUS
 
       rule 'statement : expr' do |st, e|
@@ -153,19 +153,20 @@ module Mm2ep
         ex.value = BoolValue.new(l.value.to_s)
       end
 
-      rule 'expr : NOT_OP expr %prec UMINUS' do |ex, l, e|
-        ex.value = NotOp.new(e.value)
+      rule 'expr : expr OR_OP expr' do |ex, l, e, r|
+        ex.value = OrOp.new(l.value, r.value)
       end
 
       rule 'expr : expr AND_OP expr' do |ex, l, e, r|
         ex.value = AndOp.new(l.value, r.value)
       end
 
-      rule 'expr : expr OR_OP expr' do |ex, l, e, r|
-        ex.value = OrOp.new(l.value, r.value)
-      end
       rule 'expr : L_PAR expr R_PAR' do |ex, l, e, r|
         ex.value = e.value
+      end
+
+      rule 'expr : NOT_OP expr %prec UMINUS' do |ex, l, e|
+        ex.value = NotOp.new(e.value)
       end
 
       rule 'expr : VAR EQ_OP bool_expr' do |ex, v, eq, n|
