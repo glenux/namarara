@@ -127,6 +127,7 @@ module Mm2ep
       precedence :left, 'OR_OP'
       precedence :left, 'AND_OP'
       precedence :left, 'EQ_OP'
+      precedence :left, 'L_PAR', 'R_PAR'
       precedence :right, :UMINUS
 
       rule 'statement : expr' do |st, e|
