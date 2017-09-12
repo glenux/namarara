@@ -1,27 +1,58 @@
 module Mm2ep
   module Depend
-    class And_op
+    class Treenode 
+      def initialize 
+      end 
+
+      # c
+      def compute 
+        raise NotImplementedError 
+      end 
+    end 
+
+    class VarExpr < Treenode 
+      def initialize str 
+        @name = str
+        @value = nil 
+      end 
+
+      def set value 
+        @value = value
+      end 
+
+      def compute
+        @value 
+      end 
+    end 
+
+    class BoolExpr < Treenode 
+      def initialize str 
+        @value = case str 
+                 when /true/i then true 
+                 when /false/i then false 
+                 end 
+
+      end 
+
+      def compute
+        @value 
+      end 
+    end 
+
+    class AndOp < Treenode
       attr_reader :expr1, :expr2
       def initialize expr1, expr2
-        unless expr1.value.to_s.match(/true/).nil?
-          @expr1 = true
-        else
-          @expr1 = false
-        end
-        unless expr2.value.to_s.match(/true/).nil?
-          @expr2 = true
-        else
-          @expr2 = false
-        end
+          @expr1 = expr1 
+          @expr2 = expr2
       end
 
-      def and_op
+      def compute
         # binding.pry
-        return @expr1 && @expr2
+        return @expr1.compute && @expr2.compute
       end
     end
 
-    class Or_op
+    class OrOp
       attr_reader :expr1, :expr2
       def initialize expr1, expr2
         unless expr1.value.to_s.match(/true/).nil?
@@ -36,7 +67,7 @@ module Mm2ep
         end
       end
 
-      def or_op
+      def compute
         return @expr1 || @expr2
       end
     end
@@ -47,14 +78,14 @@ module Mm2ep
         @expr = expr
       end
 
-      def not_op
+      def compute
         # binding.pry
         return true unless @expr.value.to_s.eql? 'true'
         return false
       end
     end
 
-    class Eq_op
+    class EqOp
       attr_reader :val, :other
       def initialize val, other
         @val = val.value.to_s
@@ -65,7 +96,7 @@ module Mm2ep
         end
       end
 
-      def eq_op
+      def compute
         return if val == @other
       end
     end
@@ -80,46 +111,46 @@ module Mm2ep
       end
 
       rule 'expr : VAR' do |ex, l|
-        ex.value = l.value
+        ex.value = VarExpr.new(l.value)
       end
 
       rule 'expr : T_BOOL' do |ex, l|
-        ex.value = l.value
+        ex.value = BoolExpr.new(l.value)
       end
 
       rule 'expr : F_BOOL' do |ex, l|
-        ex.value = l.value
+        ex.value = BoolExpr.new(l.value)
       end
 
       rule 'expr : NOT_OP SPACE expr' do |ex, l, s, e|
-        ex.value = Not_op.new(e).not_op
+        ex.value = Not_op.new(e.value)
       end
 
       rule 'expr : expr SPACE AND_OP SPACE expr' do |ex, l, s, e, sp, r|
-        ex.value = And_op.new(l, r).and_op
+        ex.value = AndOp.new(l.value, r.value)
       end
 
       rule 'expr : expr SPACE OR_OP SPACE expr' do |ex, l, s, e, sp, r|
-        ex.value = Or_op.new(l, r).or_op
+        ex.value = OrOp.new(l.value, r.value)
       end
       rule 'expr : L_PAR SPACE expr SPACE R_PAR' do |ex, l, s, e, sp, r|
         ex.value = e.value
       end
 
       rule 'expr : VAR SPACE EQ_OP SPACE F_BOOL' do |ex, v, s, eq, _, n|
-        ex.value = Eq_op.new(v, n).eq_op
+        ex.value = EqOp.new(v.value, n.value)
       end
 
       rule 'expr : VAR SPACE EQ_OP SPACE T_BOOL' do |ex, v, s, eq, _, n|
-        ex.value = Eq_op.new(v, n).eq_op
+        ex.value = EqOp.new(v.value, n.value)
       end
 
       rule 'expr : VAR SPACE EQ_OP SPACE STRING' do |ex, v, s, eq, _, n|
-        ex.value = Eq_op.new(v, n).eq_op
+        ex.value = EqOp.new(v.value, n.value)
       end
 
       rule 'expr : VAR SPACE EQ_OP SPACE NUMBER' do |ex, v, s, eq, _, n|
-        ex.value = Eq_op.new(v, n).eq_op
+        ex.value = EqOp.new(v.value, n.value)
       end
 
     end # class
