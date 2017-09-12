@@ -9,6 +9,11 @@ module Mm2ep
     class TreeValue
       def value 
         raise "No value for #{@name}" if @value.nil?
+        @value 
+      end 
+
+      def to_s 
+        raise NotImplementedError
       end 
     end 
 
@@ -17,12 +22,30 @@ module Mm2ep
         @name = str
         @value = nil 
       end 
+
+      def to_s 
+        "var:#{@name}<-(#{@value})"
+      end
     end 
 
     class NumberValue < TreeValue
+      def initialize str 
+        @value = str.to_i
+      end 
+
+      def to_s 
+        "number:#{@value}"
+      end
     end 
 
     class StringValue < TreeValue
+      def initialize str 
+        @value = str
+      end 
+
+      def to_s 
+        "string:\"#{@value}\""
+      end
     end 
 
     class BoolValue < TreeValue
@@ -34,9 +57,9 @@ module Mm2ep
 
       end 
 
-      def compute
-        @value 
-      end 
+      def to_s 
+        "bool:#{@value}"
+      end
     end 
 
     class AndOp < TreeExpr
@@ -49,6 +72,10 @@ module Mm2ep
         # binding.pry
         return @expr1.compute && @expr2.compute
       end
+
+      def to_s 
+        "(#{@expr1.to_s}) AND (#{@expr2.to_s})"
+      end 
     end
 
     class OrOp
@@ -60,6 +87,10 @@ module Mm2ep
       def compute
         return @expr1.compute || @expr2.compute
       end
+
+      def to_s 
+        "(#{@expr1.to_s}) OR (#{@expr2.to_s})"
+      end 
     end
 
     class NotOp
@@ -70,6 +101,10 @@ module Mm2ep
       def compute
         return ! @expr.compute 
       end
+
+      def to_s 
+        "NOT (#{@expr.to_s})"
+      end 
     end
 
     class EqOp
@@ -81,6 +116,10 @@ module Mm2ep
       def compute
         return if @lval.value == @rval.value
       end
+
+      def to_s 
+        "(#{@lval.to_s} = #{@rval.to_s})"
+      end 
     end
 
     class Parser < Rly::Yacc
