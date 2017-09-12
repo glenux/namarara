@@ -74,7 +74,7 @@ module Mm2ep
       end
 
       def to_s 
-        "(#{@expr1.to_s}) AND (#{@expr2.to_s})"
+        "( #{@expr1.to_s}) AND (#{@expr2.to_s} )"
       end 
     end
 
@@ -89,7 +89,7 @@ module Mm2ep
       end
 
       def to_s 
-        "(#{@expr1.to_s}) OR (#{@expr2.to_s})"
+        "( #{@expr1.to_s}) OR (#{@expr2.to_s} )"
       end 
     end
 
@@ -103,7 +103,7 @@ module Mm2ep
       end
 
       def to_s 
-        "NOT (#{@expr.to_s})"
+        "NOT ( #{@expr.to_s} )"
       end 
     end
 
@@ -124,8 +124,10 @@ module Mm2ep
 
     class Parser < Rly::Yacc
 
-      precedence :left, 'OR_OP', 'EQ_OP'
-      precedence :left, 'AND_OP', 'NOT_OP'
+      precedence :left, 'OR_OP'
+      precedence :left, 'AND_OP'
+      precedence :left, 'EQ_OP' 
+      precedence :right, :UMINUS
 
       rule 'statement : expr' do |st, e|
         st.value = e.value
@@ -146,7 +148,7 @@ module Mm2ep
         ex.value = BoolValue.new(l.value.to_s)
       end
 
-      rule 'expr : NOT_OP SPACE expr' do |ex, l, s, e|
+      rule 'expr : NOT_OP SPACE expr %prec UMINUS' do |ex, l, s, e|
         ex.value = NotOp.new(e.value)
       end
 
