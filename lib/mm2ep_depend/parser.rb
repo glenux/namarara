@@ -1,70 +1,70 @@
 module Mm2ep
   module Depend
-    class TreeExpr 
-      def compute 
-        raise NotImplementedError 
-      end 
-    end 
+    class TreeExpr
+      def compute
+        raise NotImplementedError
+      end
+    end
 
     class TreeValue
-      def value 
+      def value
         raise "No value for #{@name}" if @value.nil?
-        @value 
-      end 
+        @value
+      end
 
-      def to_s 
+      def to_s
         raise NotImplementedError
-      end 
-    end 
+      end
+    end
 
     class VarValue < TreeValue
-      def initialize str 
+      def initialize str
         @name = str
-        @value = nil 
-      end 
+        @value = nil
+      end
 
-      def to_s 
+      def to_s
         "var:#{@name}<-(#{@value})"
       end
-    end 
+    end
 
     class NumberValue < TreeValue
-      def initialize str 
+      def initialize str
         @value = str.to_i
-      end 
+      end
 
-      def to_s 
+      def to_s
         "number:#{@value}"
       end
-    end 
+    end
 
     class StringValue < TreeValue
-      def initialize str 
+      def initialize str
         @value = str
-      end 
+      end
 
-      def to_s 
+      def to_s
         "string:\"#{@value}\""
       end
-    end 
+    end
 
     class BoolValue < TreeValue
-      def initialize str 
-        @value = case str 
-                 when /true/i then true 
-                 when /false/i then false 
-                 end 
+      def initialize str
+        @value = case str
+                 when /true/i then true
+                 when /false/i then false
+                 end
 
-      end 
+      end
 
-      def to_s 
+      def to_s
         "bool:#{@value}"
       end
-    end 
+    end
 
     class AndOp < TreeExpr
       def initialize expr1, expr2
-          @expr1 = expr1 
+          @expr1 = expr1
           @expr2 = expr2
       end
 
@@ -73,14 +73,14 @@ module Mm2ep
         return @expr1.compute && @expr2.compute
       end
 
-      def to_s 
+      def to_s
         "( #{@expr1.to_s}) AND (#{@expr2.to_s} )"
-      end 
+      end
     end
 
     class OrOp
       def initialize expr1, expr2
-          @expr1 = expr1 
+          @expr1 = expr1
           @expr2 = expr2
       end
 
@@ -88,9 +88,9 @@ module Mm2ep
         return @expr1.compute || @expr2.compute
       end
 
-      def to_s 
+      def to_s
         "( #{@expr1.to_s}) OR (#{@expr2.to_s} )"
-      end 
+      end
     end
 
     class NotOp
@@ -99,17 +99,17 @@ module Mm2ep
       end
 
       def compute
-        return ! @expr.compute 
+        return ! @expr.compute
       end
 
-      def to_s 
+      def to_s
         "NOT ( #{@expr.to_s} )"
-      end 
+      end
     end
 
     class EqOp
       def initialize lval, rval
-        @lval = lval 
+        @lval = lval
         @rval = rval
       end
 
@@ -117,16 +117,16 @@ module Mm2ep
         return if @lval.value == @rval.value
       end
 
-      def to_s 
+      def to_s
         "#{@lval.to_s} = #{@rval.to_s}"
-      end 
+      end
     end
 
     class Parser < Rly::Yacc
 
       precedence :left, 'OR_OP'
       precedence :left, 'AND_OP'
-      precedence :left, 'EQ_OP' 
+      precedence :left, 'EQ_OP'
       precedence :right, :UMINUS
 
       rule 'statement : expr' do |st, e|
@@ -135,7 +135,7 @@ module Mm2ep
 
       rule 'expr : VAR' do |ex, l|
         ex.value = EqOp.new(
-          VarExpr.new(l.value), 
+          VarExpr.new(l.value),
           BoolValue.new('true')
         )
       end
@@ -148,45 +148,45 @@ module Mm2ep
         ex.value = BoolValue.new(l.value.to_s)
       end
 
-      rule 'expr : NOT_OP SPACE expr %prec UMINUS' do |ex, l, s, e|
+      rule 'expr : NOT_OP expr %prec UMINUS' do |ex, l, e|
         ex.value = NotOp.new(e.value)
       end
 
-      rule 'expr : expr SPACE AND_OP SPACE expr' do |ex, l, s, e, sp, r|
+      rule 'expr : expr AND_OP expr' do |ex, l, e, r|
         ex.value = AndOp.new(l.value, r.value)
       end
 
-      rule 'expr : expr SPACE OR_OP SPACE expr' do |ex, l, s, e, sp, r|
+      rule 'expr : expr OR_OP expr' do |ex, l, e, r|
         ex.value = OrOp.new(l.value, r.value)
       end
-      rule 'expr : L_PAR SPACE expr SPACE R_PAR' do |ex, l, s, e, sp, r|
+      rule 'expr : L_PAR expr R_PAR' do |ex, l, e, r|
         ex.value = e.value
       end
 
-      rule 'expr : VAR SPACE EQ_OP SPACE F_BOOL' do |ex, v, s, eq, _, n|
+      rule 'expr : VAR EQ_OP F_BOOL' do |ex, v, eq, n|
         ex.value = EqOp.new(
-          VarValue.new(v.value.to_s), 
+          VarValue.new(v.value.to_s),
           BoolValue.new(n.value)
         )
       end
 
-      rule 'expr : VAR SPACE EQ_OP SPACE T_BOOL' do |ex, v, s, eq, _, n|
+      rule 'expr : VAR EQ_OP T_BOOL' do |ex, v, eq, n|
         ex.value = EqOp.new(
-          VarValue.new(v.value.to_s), 
+          VarValue.new(v.value.to_s),
           BoolValue.new(n.value)
         )
       end
 
-      rule 'expr : VAR SPACE EQ_OP SPACE STRING' do |ex, v, s, eq, _, n|
+      rule 'expr : VAR EQ_OP STRING' do |ex, v, eq, n|
         ex.value = EqOp.new(
-          VarValue.new(v.value.to_s), 
+          VarValue.new(v.value.to_s),
           StringValue.new(n.value)
         )
       end
 
-      rule 'expr : VAR SPACE EQ_OP SPACE NUMBER' do |ex, v, s, eq, _, n|
+      rule 'expr : VAR EQ_OP NUMBER' do |ex, v, eq, n|
         ex.value = EqOp.new(
-          VarValue.new(v.value.to_s), 
+          VarValue.new(v.value.to_s),
           NumberValue.new(n.value)
         )
       end

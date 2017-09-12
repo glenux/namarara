@@ -2,7 +2,9 @@ module Mm2ep
   module Depend
     class Lexer < Rly::Lex
 
-      token :SPACE, /\s+/
+      ignore "\t\n "
+
+      # token :SPACE, /\s+/
       token :L_PAR, /\(/
       token :R_PAR, /\)/
       token :NUMBER, /[0-9]+(\.[0-9]+)?/
