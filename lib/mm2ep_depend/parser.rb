@@ -74,7 +74,7 @@ module Mm2ep
       end
 
       def to_s
-        "( #{@expr1.to_s}) AND (#{@expr2.to_s} )"
+        "( #{@expr1.to_s} ) AND ( #{@expr2.to_s} )"
       end
     end
 
@@ -89,7 +89,7 @@ module Mm2ep
       end
 
       def to_s
-        "( #{@expr1.to_s}) OR (#{@expr2.to_s} )"
+        "( #{@expr1.to_s} ) OR ( #{@expr2.to_s} )"
       end
     end
 
@@ -127,6 +127,7 @@ module Mm2ep
       precedence :left, 'OR_OP'
       precedence :left, 'AND_OP'
       precedence :left, 'EQ_OP'
+      precedence :left, 'L_PAR', 'R_PAR'
       precedence :right, :UMINUS
 
       rule 'statement : expr' do |st, e|
