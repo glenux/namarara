@@ -118,7 +118,7 @@ module Mm2ep
       end
 
       def to_s 
-        "(#{@lval.to_s} = #{@rval.to_s})"
+        "#{@lval.to_s} = #{@rval.to_s}"
       end 
     end
 
