@@ -12,7 +12,7 @@ module Mm2ep
       token :AND_OP, /AND/
       token :OR_OP, /OR/
       token :NOT_OP, /NOT/
-      token :SPACE, /\s+/
+      token :SPACE, /\s*/
       token :R_PAR, /\)/
 
       on_error do |t|
