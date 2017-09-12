@@ -7,21 +7,15 @@ module Mm2ep
     end 
 
     class TreeValue
-      attr_accessor :value
+      def value 
+        raise "No value for #{@name}" if @value.nil?
+      end 
     end 
 
     class VarValue < TreeValue
-      attr_accessor :value 
-
       def initialize str 
         @name = str
         @value = nil 
-      end 
-
-      def compute
-        # FIXME: test if @value is a boolean 
-        # raise an exception in all other cases
-        @value 
       end 
     end 
 
