@@ -6,6 +6,7 @@ require 'thor'
 require 'rly'
 require 'pry'
 require 'mm2ep_depend'
+require 'pp'
 
 module Mm2ep
   module Depend
@@ -17,7 +18,7 @@ module Mm2ep
           parser = Parser.new(Lexer.new)
           puts line.inspect
           token = parser.parse(line.chomp, true)
-          puts token
+          pp token
           # puts false && true
           # puts false || false
           # binding.pry

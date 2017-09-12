@@ -40,7 +40,6 @@ module Mm2ep
     end 
 
     class AndOp < TreeExpr
-      attr_reader :expr1, :expr2
       def initialize expr1, expr2
           @expr1 = expr1 
           @expr2 = expr2
@@ -53,47 +52,34 @@ module Mm2ep
     end
 
     class OrOp
-      attr_reader :expr1, :expr2
       def initialize expr1, expr2
-        unless expr1.value.to_s.match(/true/).nil?
-          @expr1 = true
-        else
-          @expr1 = false
-        end
-        unless expr2.value.to_s.match(/true/).nil?
-          @expr2 = true
-        else
-          @expr2 = false
-        end
+          @expr1 = expr1 
+          @expr2 = expr2
       end
 
       def compute
-        return @expr1 || @expr2
+        return @expr1.compute || @expr2.compute
       end
     end
 
     class NotOp
-      attr_reader :expr
       def initialize expr
         @expr = expr
       end
 
       def compute
-        # binding.pry
-        return true unless @expr.value.to_s.eql? 'true'
-        return false
+        return ! @expr.compute 
       end
     end
 
     class EqOp
-      attr_reader :val, :other
-      def initialize var, value
-        @var = var 
-        @value = value
+      def initialize lval, rval
+        @lval = lval 
+        @rval = rval
       end
 
       def compute
-        return if @val.value == @other.value
+        return if @lval.value == @rval.value
       end
     end
 
