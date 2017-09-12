@@ -94,10 +94,12 @@ module Mm2ep
     class EqOp
       attr_reader :val, :other
       def initialize var, value
+        @var = var 
+        @value = value
       end
 
       def compute
-        return if val.value == @other.value
+        return if @val.value == @other.value
       end
     end
 
@@ -118,11 +120,11 @@ module Mm2ep
       end
 
       rule 'expr : T_BOOL' do |ex, l|
-        ex.value = BoolExpr.new(l.value)
+        ex.value = BoolValue.new(l.value.to_s)
       end
 
       rule 'expr : F_BOOL' do |ex, l|
-        ex.value = BoolExpr.new(l.value)
+        ex.value = BoolValue.new(l.value.to_s)
       end
 
       rule 'expr : NOT_OP SPACE expr' do |ex, l, s, e|
@@ -141,19 +143,31 @@ module Mm2ep
       end
 
       rule 'expr : VAR SPACE EQ_OP SPACE F_BOOL' do |ex, v, s, eq, _, n|
-        ex.value = EqOp.new(v.value, n.value)
+        ex.value = EqOp.new(
+          VarValue.new(v.value.to_s), 
+          BoolValue.new(n.value)
+        )
       end
 
       rule 'expr : VAR SPACE EQ_OP SPACE T_BOOL' do |ex, v, s, eq, _, n|
-        ex.value = EqOp.new(v.value, n.value)
+        ex.value = EqOp.new(
+          VarValue.new(v.value.to_s), 
+          BoolValue.new(n.value)
+        )
       end
 
       rule 'expr : VAR SPACE EQ_OP SPACE STRING' do |ex, v, s, eq, _, n|
-        ex.value = EqOp.new(v.value, n.value)
+        ex.value = EqOp.new(
+          VarValue.new(v.value.to_s), 
+          StringValue.new(n.value)
+        )
       end
 
       rule 'expr : VAR SPACE EQ_OP SPACE NUMBER' do |ex, v, s, eq, _, n|
-        ex.value = EqOp.new(v.value, n.value)
+        ex.value = EqOp.new(
+          VarValue.new(v.value.to_s), 
+          NumberValue.new(n.value)
+        )
       end
 
     end # class
