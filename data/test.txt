@@ -1,1 +1,1 @@
-( truc_bidule = true )
+NOT ( truc_bidule = false )
