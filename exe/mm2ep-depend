@@ -12,21 +12,21 @@ module Mm2ep
   module Depend
 
     class ParseCli < Thor
-      desc 'parse INFILE', 'Parse INFILE into tokens'
-      def parse(infile)
+      desc 'parse INFILE VARS', 'Parse INFILE into tokens and evaluate vars'
+      def parse(infile, *vars)
         line = File.read(infile).gsub(/\n/,'')
         parser = Parser.new(Lexer.new)
-        puts line.inspect
+        vartruc = {}
+        vars.each do |var|
+          vartruc[var.split('=')[0]] = var.split('=')[1]
+        end
+        puts vartruc
+        parser.names(vartruc)
         token = parser.parse(line.chomp, true)
         pp token
         puts "RAW : #{line}"
         puts "EVAL: #{token.to_s}"
-        # puts false && true
-        # puts false || false
-        # binding.pry
-        # parser = Parser2.new
-        # lexer = TestLexer.new(parser.parse(line))
-        # puts lexer.testlexe
+        puts "RESULT: #{token.compute}"
       end
     end
   end

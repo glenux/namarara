@@ -18,9 +18,16 @@ module Mm2ep
     end
 
     class VarValue < TreeValue
-      def initialize str
+      def initialize str, value
         @name = str
-        @value = nil
+        @value = case value
+                 when /true/i then true
+                 when /false/i then false
+                 end
+      end
+
+      def compute
+        @value
       end
 
       def to_s
@@ -33,6 +40,10 @@ module Mm2ep
         @value = str.to_i
       end
 
+      def compute
+        @value
+      end
+
       def to_s
         "number:#{@value}"
       end
@@ -41,6 +52,10 @@ module Mm2ep
     class StringValue < TreeValue
       def initialize str
         @value = str
+      end
+
+      def compute
+        @value
       end
 
       def to_s
@@ -57,6 +72,10 @@ module Mm2ep
 
       end
 
+      def compute
+        @value
+      end
+
       def to_s
         "bool:#{@value}"
       end
@@ -69,7 +88,6 @@ module Mm2ep
       end
 
       def compute
-        # binding.pry
         return @expr1.compute && @expr2.compute
       end
 
@@ -114,7 +132,7 @@ module Mm2ep
       end
 
       def compute
-        return if @lval.value == @rval.value
+        return @lval.value == @rval.value
       end
 
       def to_s
@@ -123,6 +141,10 @@ module Mm2ep
     end
 
     class Parser < Rly::Yacc
+
+      def names tab
+        @names = tab
+      end
 
       precedence :left, :OR_OP
       precedence :left, :AND_OP
@@ -136,7 +158,7 @@ module Mm2ep
 
       rule 'expr : VAR' do |ex, l|
         ex.value = EqOp.new(
-          VarExpr.new(l.value),
+          VarValue.new(l.value, @names[l.value]),
           BoolValue.new('true')
         )
       end
@@ -170,22 +192,23 @@ module Mm2ep
       end
 
       rule 'expr : VAR EQ_OP bool_expr' do |ex, v, eq, n|
+        # binding.pry
         ex.value = EqOp.new(
-          VarValue.new(v.value.to_s),
+          VarValue.new(v.value.to_s, @names[v.value]),
           BoolValue.new(n.value)
         )
       end
 
       rule 'expr : VAR EQ_OP STRING' do |ex, v, eq, n|
         ex.value = EqOp.new(
-          VarValue.new(v.value.to_s),
+          VarValue.new(v.value.to_s, @names[v.value]),
           StringValue.new(n.value)
         )
       end
 
       rule 'expr : VAR EQ_OP NUMBER' do |ex, v, eq, n|
         ex.value = EqOp.new(
-          VarValue.new(v.value.to_s),
+          VarValue.new(v.value.to_s, @names[v.value]),
           NumberValue.new(n.value)
         )
       end
