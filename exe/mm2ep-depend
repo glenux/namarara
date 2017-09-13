@@ -16,12 +16,14 @@ module Mm2ep
       def parse(infile, *vars)
         line = File.read(infile).gsub(/\n/,'')
         parser = Parser.new(Lexer.new)
-        vartruc = {}
+        tab_vars = {}
         vars.each do |var|
-          vartruc[var.split('=')[0]] = var.split('=')[1]
+          tab_vars[var.split('=')[0]] = var.split('=')[1]
         end
-        puts vartruc
-        parser.names(vartruc)
+        
+        # Give vars name and value from shell command to parser
+        parser.names(tab_vars)
+
         token = parser.parse(line.chomp, true)
         pp token
         puts "RAW : #{line}"
