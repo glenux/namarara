@@ -8,3 +8,5 @@ require 'rly'
 
 require 'mm2ep_depend/lexer'
 require 'mm2ep_depend/parser'
+require 'mm2ep_depend/eval_error'
+require 'errors/var_not_defined'
