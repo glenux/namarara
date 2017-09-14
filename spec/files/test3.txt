@@ -1,1 +1,0 @@
-NOT ( truc_bidule = true ) OR ( true ) AND machin = false

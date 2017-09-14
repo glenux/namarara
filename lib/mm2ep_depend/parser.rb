@@ -20,7 +20,11 @@ module Mm2ep
     class VarValue < TreeValue
       def initialize(str, value)
         @name = str
-        @value = value
+        @value = case value
+                 when /true/i then true
+                 when /false/i then false
+                 else value
+                 end
       end
 
       def compute
@@ -62,7 +66,10 @@ module Mm2ep
 
     class BoolValue < TreeValue
       def initialize(str)
-        @value = str
+        @value = case str
+                 when /true/i then true
+                 when /false/i then false
+                 end
       end
 
       def compute
@@ -125,7 +132,7 @@ module Mm2ep
       end
 
       def compute
-        @lval.value.eql? @rval.value
+        @lval.value == @rval.value
       end
 
       def to_s

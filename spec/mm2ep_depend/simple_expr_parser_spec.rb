@@ -59,7 +59,7 @@ describe Mm2ep::Depend::Parser do
   end
 
   it 'has to evaluate true OR true and return true' do
-    line = File.read(testfile('simple_or_expr_string.txt')).delete("\n")
+    line = File.read(testfile('simple_expr_or_expr.txt')).delete("\n")
     parser = Mm2ep::Depend::Parser.new(Mm2ep::Depend::Lexer.new)
     parser.names={'truc_bidule' => 'true',
                   'machin' => 'true'
