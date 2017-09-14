@@ -1,14 +1,15 @@
 module Mm2ep
   module Depend
     class TreeExpr
+
       def compute
         raise NotImplementedError
       end
     end
 
     class TreeValue
+
       def value
-        raise "No value for #{@name}" if @value.nil?
         @value
       end
 
@@ -18,13 +19,22 @@ module Mm2ep
     end
 
     class VarValue < TreeValue
+      attr_reader :errors
+
       def initialize(str, value)
+        @errors = []
         @name = str
         @value = case value
                  when /true/i then true
                  when /false/i then false
                  else value
                  end
+        if @value.nil?
+          @errors << VarNotDefined.new(
+            message:"No value for #{@name}",
+            var: @name
+            )
+        end
       end
 
       def compute
@@ -37,7 +47,10 @@ module Mm2ep
     end
 
     class NumberValue < TreeValue
+      attr_reader :errors
+
       def initialize(str)
+        @errors = []
         @value = str
       end
 
@@ -51,7 +64,10 @@ module Mm2ep
     end
 
     class StringValue < TreeValue
+      attr_reader :errors
+
       def initialize(str)
+        @errors = []
         @value = str
       end
 
@@ -65,7 +81,10 @@ module Mm2ep
     end
 
     class BoolValue < TreeValue
+      attr_reader :errors
+
       def initialize(str)
+        @errors = []
         @value = case str
                  when /true/i then true
                  when /false/i then false
@@ -82,37 +101,51 @@ module Mm2ep
     end
 
     class AndOp < TreeExpr
-      def initialize(expr1, expr2)
-        @expr1 = expr1
-        @expr2 = expr2
+      attr_reader :errors
+
+      def initialize(lval, rval)
+        @errors = []
+        @errors.concat lval.errors
+        @errors.concat rval.errors
+        @lval = lval
+        @rval = rval
       end
 
       def compute
-        @expr1.compute && @expr2.compute
+        @lval.compute && @rval.compute
       end
 
       def to_s
-        "( #{@expr1} ) AND ( #{@expr2} )"
+        "( #{@lval} ) AND ( #{@rval} )"
       end
     end
 
     class OrOp
-      def initialize(expr1, expr2)
-        @expr1 = expr1
-        @expr2 = expr2
+      attr_reader :errors
+
+      def initialize(lval, rval)
+        @errors = []
+        @errors.concat lval.errors
+        @errors.concat rval.errors
+        @lval = lval
+        @rval = rval
       end
 
       def compute
-        @expr1.compute || @expr2.compute
+        @lval.compute || @rval.compute
       end
 
       def to_s
-        "( #{@expr1} ) OR ( #{@expr2} )"
+        "( #{@lval} ) OR ( #{@rval} )"
       end
     end
 
     class NotOp
+      attr_reader :errors
+
       def initialize(expr)
+        @errors = []
+        @errors.concat expr.errors
         @expr = expr
       end
 
@@ -126,9 +159,15 @@ module Mm2ep
     end
 
     class EqOp
+      attr_reader :errors
+
       def initialize(lval, rval)
+        @errors = []
+        @errors.concat lval.errors
+        @errors.concat rval.errors
         @lval = lval
         @rval = rval
+
       end
 
       def compute
@@ -142,6 +181,7 @@ module Mm2ep
 
     class Parser < Rly::Yacc
       attr_writer :names
+      attr_reader :errors
       # def names(tab)
       #   @names = tab
       # end
