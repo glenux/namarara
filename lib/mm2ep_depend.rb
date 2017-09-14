@@ -1,5 +1,4 @@
-require "mm2ep_depend/version"
-
+require 'mm2ep_depend/version'
 
 module Mm2epDepend
   # Your code goes here...

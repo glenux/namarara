@@ -18,12 +18,9 @@ module Mm2ep
     end
 
     class VarValue < TreeValue
-      def initialize str, value
+      def initialize(str, value)
         @name = str
-        @value = case value
-                 when /true/i then true
-                 when /false/i then false
-                 end
+        @value = value
       end
 
       def compute
@@ -36,8 +33,8 @@ module Mm2ep
     end
 
     class NumberValue < TreeValue
-      def initialize str
-        @value = str.to_i
+      def initialize(str)
+        @value = str
       end
 
       def compute
@@ -50,7 +47,7 @@ module Mm2ep
     end
 
     class StringValue < TreeValue
-      def initialize str
+      def initialize(str)
         @value = str
       end
 
@@ -64,12 +61,8 @@ module Mm2ep
     end
 
     class BoolValue < TreeValue
-      def initialize str
-        @value = case str
-                 when /true/i then true
-                 when /false/i then false
-                 end
-
+      def initialize(str)
+        @value = str
       end
 
       def compute
@@ -82,69 +75,69 @@ module Mm2ep
     end
 
     class AndOp < TreeExpr
-      def initialize expr1, expr2
-          @expr1 = expr1
-          @expr2 = expr2
+      def initialize(expr1, expr2)
+        @expr1 = expr1
+        @expr2 = expr2
       end
 
       def compute
-        return @expr1.compute && @expr2.compute
+        @expr1.compute && @expr2.compute
       end
 
       def to_s
-        "( #{@expr1.to_s} ) AND ( #{@expr2.to_s} )"
+        "( #{@expr1} ) AND ( #{@expr2} )"
       end
     end
 
     class OrOp
-      def initialize expr1, expr2
-          @expr1 = expr1
-          @expr2 = expr2
+      def initialize(expr1, expr2)
+        @expr1 = expr1
+        @expr2 = expr2
       end
 
       def compute
-        return @expr1.compute || @expr2.compute
+        @expr1.compute || @expr2.compute
       end
 
       def to_s
-        "( #{@expr1.to_s} ) OR ( #{@expr2.to_s} )"
+        "( #{@expr1} ) OR ( #{@expr2} )"
       end
     end
 
     class NotOp
-      def initialize expr
+      def initialize(expr)
         @expr = expr
       end
 
       def compute
-        return ! @expr.compute
+        !@expr.compute
       end
 
       def to_s
-        "NOT ( #{@expr.to_s} )"
+        "NOT ( #{@expr} )"
       end
     end
 
     class EqOp
-      def initialize lval, rval
+      def initialize(lval, rval)
         @lval = lval
         @rval = rval
       end
 
       def compute
-        return @lval.value == @rval.value
+        @lval.value.eql? @rval.value
       end
 
       def to_s
-        "#{@lval.to_s} = #{@rval.to_s}"
+        "#{@lval} = #{@rval}"
       end
     end
 
     class Parser < Rly::Yacc
-
-      def names tab
-        @names = tab
-      end
+      attr_writer :names
+      # def names(tab)
+      #   @names = tab
+      # end
 
       precedence :left, :OR_OP
       precedence :left, :AND_OP
@@ -163,11 +156,11 @@ module Mm2ep
         )
       end
 
-      rule 'bool_expr : F_BOOL'do |ex, l|
+      rule 'bool_expr : F_BOOL' do |ex, l|
         ex.value = l.value
       end
 
-      rule 'bool_expr : T_BOOL'do |ex, l|
+      rule 'bool_expr : T_BOOL' do |ex, l|
         ex.value = l.value
       end
 
@@ -175,23 +168,23 @@ module Mm2ep
         ex.value = BoolValue.new(l.value.to_s)
       end
 
-      rule 'expr : expr OR_OP expr' do |ex, l, e, r|
+      rule 'expr : expr OR_OP expr' do |ex, l, _e, r|
         ex.value = OrOp.new(l.value, r.value)
       end
 
-      rule 'expr : expr AND_OP expr' do |ex, l, e, r|
+      rule 'expr : expr AND_OP expr' do |ex, l, _e, r|
         ex.value = AndOp.new(l.value, r.value)
       end
 
-      rule 'expr : L_PAR expr R_PAR' do |ex, l, e, r|
+      rule 'expr : L_PAR expr R_PAR' do |ex, _l, e, _r|
         ex.value = e.value
       end
 
-      rule 'expr : NOT_OP expr %prec UMINUS' do |ex, l, e|
+      rule 'expr : NOT_OP expr %prec UMINUS' do |ex, _l, e|
         ex.value = NotOp.new(e.value)
       end
 
-      rule 'expr : VAR EQ_OP bool_expr' do |ex, v, eq, n|
+      rule 'expr : VAR EQ_OP bool_expr' do |ex, v, _eq, n|
         # binding.pry
         ex.value = EqOp.new(
           VarValue.new(v.value.to_s, @names[v.value]),
@@ -199,20 +192,19 @@ module Mm2ep
         )
       end
 
-      rule 'expr : VAR EQ_OP STRING' do |ex, v, eq, n|
+      rule 'expr : VAR EQ_OP STRING' do |ex, v, _eq, n|
         ex.value = EqOp.new(
           VarValue.new(v.value.to_s, @names[v.value]),
           StringValue.new(n.value)
         )
       end
 
-      rule 'expr : VAR EQ_OP NUMBER' do |ex, v, eq, n|
+      rule 'expr : VAR EQ_OP NUMBER' do |ex, v, _eq, n|
         ex.value = EqOp.new(
           VarValue.new(v.value.to_s, @names[v.value]),
           NumberValue.new(n.value)
         )
       end
-
     end # class
   end # module
 end # module

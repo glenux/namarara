@@ -20,9 +20,9 @@ module Mm2ep
         vars.each do |var|
           tab_vars[var.split('=')[0]] = var.split('=')[1]
         end
-        
+        binding.pry
         # Give vars name and value from shell command to parser
-        parser.names(tab_vars)
+        parser.names=tab_vars
 
         token = parser.parse(line.chomp, true)
         pp token

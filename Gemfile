@@ -5,6 +5,7 @@ gem 'thor'
 gem 'rly'
 gem 'pry'
 gem 'opal'
-
+gem 'rubocop'
+gem 'rubocop-rspec'
 # Specify your gem's dependencies in mm2ep_depend.gemspec
 gemspec

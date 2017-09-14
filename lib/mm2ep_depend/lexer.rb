@@ -1,7 +1,6 @@
 module Mm2ep
   module Depend
     class Lexer < Rly::Lex
-
       ignore "\t\n "
 
       # token :SPACE, /\s+/
@@ -9,7 +8,7 @@ module Mm2ep
       token :R_PAR, /\)/
       token :NUMBER, /[0-9]+(\.[0-9]+)?/
       token :STRING, /"([^"]*)"/ do |s|
-        s.value.gsub!(/"(.*)"/,'\1')
+        s.value.gsub!(/"(.*)"/, '\1')
         s
       end
 
@@ -26,7 +25,6 @@ module Mm2ep
         t.lexer.pos += 1
         nil
       end
-
     end # class
   end # module
 end # module
