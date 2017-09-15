@@ -1,17 +1,13 @@
 module Mm2ep
   module Depend
     class TreeExpr
-
       def compute
         raise NotImplementedError
       end
     end
 
     class TreeValue
-
-      def value
-        @value
-      end
+      attr_reader :value
 
       def to_s
         raise NotImplementedError
@@ -29,12 +25,11 @@ module Mm2ep
                  when /false/i then false
                  else value
                  end
-        if @value.nil?
-          @errors << VarNotDefined.new(
-            message:"No value for #{@name}",
-            var: @name
-            )
-        end
+        return unless @value.nil?
+        @errors << VarNotDefined.new(
+          message: "No value for #{@name}",
+          var: @name
+        )
       end
 
       def compute
@@ -167,7 +162,6 @@ module Mm2ep
         @errors.concat rval.errors
         @lval = lval
         @rval = rval
-
       end
 
       def compute
@@ -181,10 +175,16 @@ module Mm2ep
 
     class Parser < Rly::Yacc
       attr_writer :names
-      attr_reader :errors
-      # def names(tab)
-      #   @names = tab
-      # end
+
+      def check_grammar(line, tokens)
+        grammar = tokens.to_s.split(/=|AND|OR/)
+        expr = line.split(/=|AND|OR/)
+        return if grammar.size == expr.size
+        return if grammar.empty?
+        tokens.errors << InvalidGrammar.new(
+          message: 'Invalid Grammar'
+        )
+      end
 
       precedence :left, :OR_OP
       precedence :left, :AND_OP
@@ -232,7 +232,6 @@ module Mm2ep
       end
 
       rule 'expr : VAR EQ_OP bool_expr' do |ex, v, _eq, n|
-        # binding.pry
         ex.value = EqOp.new(
           VarValue.new(v.value.to_s, @names[v.value]),
           BoolValue.new(n.value)

@@ -12,7 +12,6 @@ module Mm2ep
         @message = hash[:message]
         @var = hash[:var]
       end
-
     end
   end
 end

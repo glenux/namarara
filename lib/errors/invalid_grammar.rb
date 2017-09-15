@@ -1,6 +1,6 @@
 module Mm2ep
   module Depend
-    class VarNotDefined < Depend::EvalError
+    class InvalidGrammar < Depend::EvalError
     end
   end
 end
