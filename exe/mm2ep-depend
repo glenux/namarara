@@ -30,8 +30,8 @@ module Mm2ep
         puts "EVAL: #{token.to_s}"
 
         parser.check_grammar line, token
-        exit 1 unless token.errors.empty? || token.nil?
-        
+        exit 1 unless !token.nil? && token.errors.empty? 
+
         puts "RESULT: #{token.compute}"
 
       end
