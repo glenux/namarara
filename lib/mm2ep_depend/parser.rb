@@ -176,6 +176,7 @@ module Mm2ep
     class Parser < Rly::Yacc
       attr_writer :names
 
+      # Check if grammar is valid
       def check_grammar(line, tokens)
         grammar = tokens.to_s.split(/=|AND|OR/)
         expr = line.split(/=|AND|OR/)

@@ -28,9 +28,10 @@ module Mm2ep
         pp token
         puts "RAW : #{line}"
         puts "EVAL: #{token.to_s}"
+
         parser.check_grammar line, token
-        binding.pry
         exit 1 unless token.errors.empty? || token.nil?
+        
         puts "RESULT: #{token.compute}"
 
       end
