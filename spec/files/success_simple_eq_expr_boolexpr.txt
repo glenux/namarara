@@ -1,1 +1,1 @@
-truc_bidule = true
+character = true

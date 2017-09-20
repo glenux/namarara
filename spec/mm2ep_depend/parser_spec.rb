@@ -13,21 +13,19 @@ describe Mm2ep::Depend::Parser do
            .read(testfile('success_simple_eq_expr_boolexpr.txt')).delete("\n")
     parser.names = {}
     token = parser.parse(line.chomp)
-    token.errors
-         .select do |elem|
-      elem.is_a? Mm2ep::Depend::VarNotDefined
-    end.size.must_equal 1
+    errors = token.errors.select { |el| el.is_a? Mm2ep::Depend::VarNotDefined }
+    errors.size.must_equal 1
+    errors[0].var.must_equal 'character'
   end
 
   it 'has to report vars which are not defined' do
-    line = File
-           .read(testfile('success_simple_expr_or_expr.txt')).delete("\n")
+    line = File.read(testfile('success_simple_expr_or_expr.txt')).delete("\n")
     parser.names = {}
     token = parser.parse(line.chomp)
-    token.errors
-         .select do |elem|
-      elem.is_a? Mm2ep::Depend::VarNotDefined
-    end.size.must_equal 2
+    errors = token.errors.select { |el| el.is_a? Mm2ep::Depend::VarNotDefined }
+    errors.size.must_equal 2
+    errors[0].var.must_equal 'a_girl_has_no_name'
+    errors[1].var.must_equal 'character'
   end
 
   it 'has to report invalid_grammar' do
