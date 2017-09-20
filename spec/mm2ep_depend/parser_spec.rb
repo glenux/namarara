@@ -2,9 +2,15 @@ require 'spec_helper'
 require 'mm2ep_depend'
 
 describe Mm2ep::Depend::Parser do
+  let(:parser) do
+    Mm2ep::Depend::Parser.new(
+      Mm2ep::Depend::Lexer.new
+    )
+  end
+
   it 'has to report var which is not defined' do
-    line = File.read(testfile('simple_eq_expr_boolexpr.txt')).delete("\n")
-    parser = Mm2ep::Depend::Parser.new(Mm2ep::Depend::Lexer.new)
+    line = File
+           .read(testfile('success_simple_eq_expr_boolexpr.txt')).delete("\n")
     parser.names = {}
     token = parser.parse(line.chomp)
     token.errors
@@ -14,8 +20,8 @@ describe Mm2ep::Depend::Parser do
   end
 
   it 'has to report vars which are not defined' do
-    line = File.read(testfile('simple_expr_or_expr.txt')).delete("\n")
-    parser = Mm2ep::Depend::Parser.new(Mm2ep::Depend::Lexer.new)
+    line = File
+           .read(testfile('success_simple_expr_or_expr.txt')).delete("\n")
     parser.names = {}
     token = parser.parse(line.chomp)
     token.errors
@@ -25,8 +31,8 @@ describe Mm2ep::Depend::Parser do
   end
 
   it 'has to report invalid_grammar' do
-    line = File.read(testfile('grammar_partially_invalid.txt')).delete("\n")
-    parser = Mm2ep::Depend::Parser.new(Mm2ep::Depend::Lexer.new)
+    line = File
+           .read(testfile('error_grammar_partially_invalid.txt')).delete("\n")
     parser.names = { 'a_girl_has_no_name' => true, 'character' => 'Arya Stark' }
     token = parser.parse(line.chomp)
     parser.check_grammar line, token
@@ -36,8 +42,8 @@ describe Mm2ep::Depend::Parser do
   end
 
   it 'has to be nil when grammar is completely invalid' do
-    line = File.read(testfile('grammar_completely_invalid.txt')).delete("\n")
-    parser = Mm2ep::Depend::Parser.new(Mm2ep::Depend::Lexer.new)
+    line = File
+           .read(testfile('error_grammar_completely_invalid.txt')).delete("\n")
     parser.names = {}
     token = parser.parse(line.chomp)
     parser.check_grammar line, token
