@@ -23,6 +23,6 @@ Rake::TestTask.new(:spec) do |t|
   t.test_files = FileList['spec/**/*_spec.rb']
 end
 
-# Rake::Task[:spec].enhance ['spec:rubocop']
+Rake::Task[:spec].enhance ['spec:rubocop']
 
 task :default => :spec

@@ -20,11 +20,9 @@ module Mm2ep
       def initialize(str, value)
         @errors = []
         @name = str
-        @value = case value
-                 when /true/i then true
-                 when /false/i then false
-                 else value
-                 end
+        @value = value
+        @value = true if value =~ /^true$/i
+        @value = false if value =~ /^false$/i
         return unless @value.nil?
         @errors << VarNotDefined.new(
           message: "No value for #{@name}",
