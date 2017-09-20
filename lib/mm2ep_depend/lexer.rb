@@ -1,6 +1,8 @@
 module Mm2ep
   module Depend
     class Lexer < Rly::Lex
+      attr_reader :logger
+
       ignore "\t\n "
 
       # token :SPACE, /\s+/
@@ -20,8 +22,15 @@ module Mm2ep
       token :OR_OP, /OR/
       token :NOT_OP, /NOT/
 
+      def initialize(logger = nil)
+        @logger = logger
+        super()
+      end
+
       on_error do |t|
-        puts "Illegal character #{t.value}"
+        unless t.lexer.logger.nil?
+          t.lexer.logger.error "Illegal character #{t.value}"
+        end
         t.lexer.pos += 1
         nil
       end

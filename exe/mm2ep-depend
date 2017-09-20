@@ -7,20 +7,26 @@ require 'rly'
 require 'pry'
 require 'mm2ep_depend'
 require 'pp'
+require 'logger'
 
 module Mm2ep
   module Depend
 
     class ParseCli < Thor
-      desc 'parse INFILE VARS', 'Parse INFILE into tokens and evaluate vars'
+      desc 'parse OPTIONS INFILE VARS', 'Parse INFILE into tokens and evaluate VARS'
+      method_option :logfile, :aliases => "-l", :desc => "Logger with logfile"
+      method_option :stdout, :aliases => "-f", :desc => "Logger with STDOUT"
       def parse(infile, *vars)
+        logger = Logger.new('illegal_character.log') if options[:logfile]
+        logger = Logger.new(STDOUT) if options[:stdout]
         line = File.read(infile).gsub(/\n/,'')
-        parser = Parser.new(Lexer.new)
+        lexer = Lexer.new(logger)
+        parser = Parser.new(lexer)
         tab_vars = {}
         vars.each do |var|
           tab_vars[var.split('=')[0]] = var.split('=')[1]
         end
-        binding.pry
+
         # Give vars name and value from shell command to parser
         parser.names=tab_vars
 
@@ -28,7 +34,6 @@ module Mm2ep
         pp token
         puts "RAW : #{line}"
         puts "EVAL: #{token.to_s}"
-
         parser.check_grammar line, token
         exit 1 unless !token.nil? && token.errors.empty?
 
