@@ -8,6 +8,35 @@ describe Mm2ep::Depend::Parser do
     )
   end
 
+  it 'has to find var and compute it to expr' do
+    line = File
+           .read(testfile('success_simple_var_expr.txt')).delete("\n")
+    parser.names = { 'a_girl_has_no_name' => 'true' }
+    token = parser.parse(line.chomp)
+    assert_equal(true, token.compute)
+  end
+
+  it 'has to find true boolean and compute it to expr' do
+    line = File
+           .read(testfile('success_simple_t_bool_expr.txt')).delete("\n")
+    token = parser.parse(line.chomp)
+    assert_equal(true, token.compute)
+  end
+
+  it 'has to find false boolean and compute it to expr' do
+    line = File
+           .read(testfile('success_simple_f_bool_expr.txt')).delete("\n")
+    token = parser.parse(line.chomp)
+    assert_equal(false, token.compute)
+  end
+
+  it 'has to find parenthesis expr and compute it to expr' do
+    line = File
+           .read(testfile('success_simple_parenthesis_expr.txt')).delete("\n")
+    token = parser.parse(line.chomp)
+    assert_equal(true, token.compute)
+  end
+
   it 'has to apply not on expr' do
     line = File
            .read(testfile('success_simple_not_expr.txt')).delete("\n")
