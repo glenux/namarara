@@ -14,11 +14,13 @@ module Mm2ep
 
     class ParseCli < Thor
       desc 'parse OPTIONS INFILE VARS', 'Parse INFILE into tokens and evaluate VARS'
-      method_option :logfile, :aliases => "-l", :desc => "Logger with logfile"
-      method_option :stdout, :aliases => "-f", :desc => "Logger with STDOUT"
+      method_option :logfile, :type => :string, :aliases => '-l', :default => '-', :desc => "Logger with logfile"
       def parse(infile, *vars)
-        logger = Logger.new('illegal_character.log') if options[:logfile]
-        logger = Logger.new(STDOUT) if options[:stdout]
+        unless options[:logfile].eql? '-'
+          logger = Logger.new("#{options[:logfile]}.log")
+        else
+          logger = Logger.new(STDOUT)
+        end
         line = File.read(infile).gsub(/\n/,'')
         lexer = Lexer.new(logger)
         parser = Parser.new(lexer)
