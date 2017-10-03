@@ -1,3 +1,3 @@
 module Mm2epDepend
-  VERSION = '0.8.2-dev'.freeze
+  VERSION = '0.8.2'.freeze
 end
