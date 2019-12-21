@@ -1,8 +1,0 @@
----
-title: "Nom de la règle"
-expr: "est_adulte AND a_des_enfants"
-alert:
-  text: "Attention, votre adulte a des enfants"
-  explanation: |
-    Blablabla sur
-    plsuieurs lignes
