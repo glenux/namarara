@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 require 'namarara'
 
@@ -13,8 +15,8 @@ describe Namarara::Parser do
     errors = token.errors.select do |el|
       el.is_a? Namarara::Errors::VarNotDefined
     end
-    errors.size.must_equal 1
-    errors[0].var.must_equal 'character'
+    _(errors.size).must_equal 1
+    _(errors[0].var).must_equal 'character'
   end
 
   it 'has to report vars which are not defined' do
@@ -24,9 +26,9 @@ describe Namarara::Parser do
     errors = token.errors.select do |el|
       el.is_a? Namarara::Errors::VarNotDefined
     end
-    errors.size.must_equal 2
-    errors[0].var.must_equal 'a_girl_has_no_name'
-    errors[1].var.must_equal 'character'
+    _(errors.size).must_equal 2
+    _(errors[0].var).must_equal 'a_girl_has_no_name'
+    _(errors[1].var).must_equal 'character'
   end
 
   it 'has to report invalid_grammar' do
@@ -35,13 +37,13 @@ describe Namarara::Parser do
     parser.names = { 'a_girl_has_no_name' => true, 'character' => 'Arya Stark' }
     token = parser.parse(line)
     parser.check_grammar line, token
-    token.errors.select do |elem|
+    _(token.errors.select do |elem|
       elem.is_a? Namarara::Errors::InvalidGrammar
-    end.size.must_equal 1
+    end.size).must_equal 1
   end
 
   it 'has to be nil when grammar is completely invalid' do
-    line = 'false = "Arya"'
+    line = 'false / "Arya"'
     parser.names = {}
     token = parser.parse(line)
     parser.check_grammar line, token

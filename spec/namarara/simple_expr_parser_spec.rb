@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 require 'namarara'
 
@@ -157,5 +159,15 @@ describe Namarara::Parser do
     }
     token = parser.parse(line)
     assert_equal(false, token.compute)
+  end
+
+  it 'has to convert to true AND true and return true' do
+    line = 'a_girl_has_no_name AND character'
+    parser.names = {
+      'a_girl_has_no_name' => 3,
+      'character' => 1
+    }
+    token = parser.parse(line)
+    assert_equal(true, token.compute)
   end
 end
