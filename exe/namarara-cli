@@ -1,0 +1,72 @@
+#!/usr/bin/env ruby
+
+$:.insert(0, 'lib')
+
+require 'thor'
+require 'rly'
+require 'namarara'
+require 'json'
+
+module Namarara
+  class ParseCli < Thor
+    class_option :debug, 
+      type: :boolean, 
+      aliases: '-d', 
+      default: false, 
+      desc: "Enable debugging output"
+    class_option :format, 
+      type: :string, 
+      aliases: '-f', 
+      default: 'text', 
+      enum: ['text','json'],
+      desc: "Output format"
+
+    desc 'file FILE VARS', 
+      'Parse FILE into tokens then compute with VARS'
+    def file(infile, *vars)
+      line = File.read(infile).gsub(/\n/,'')
+      vars_hash = get_vars_hash(vars)
+      res = parse_string(line, vars_hash, options[:debug])
+      puts format(res, options[:format])
+    end
+
+    desc 'string STRING VARS', 
+      'Parse STRING into tokens then compute with VARS'
+    def string(line, *vars)
+      vars_hash = get_vars_hash(vars)
+      res = parse_string(line, vars_hash, options[:debug])
+      puts format(res, options[:format])
+    end
+
+    private
+
+    # Convert VAR=value list into hash
+    def get_vars_hash(vars)
+      tab_vars = {}
+      vars.each do |var|
+        tab_vars[var.split('=')[0]] = var.split('=')[1]
+      end
+      tab_vars
+    end
+
+    def format(result, format)
+      case format 
+      when 'text' then
+        txt = []
+        txt << "EXPR: #{result[:expr]}"
+        txt << "TREE: #{result[:tree]}"
+        result[:errors].each do |error|
+          txt << "ERROR: #{error}"
+        end
+        txt << "RESULT: #{result[:result]}"
+        txt.join("\n")
+      when 'json'
+        JSON.generate(result)
+      else
+        raise 'Unknown output format'
+      end
+    end
+  end
+end
+
+Namarara::ParseCli.start(ARGV)
