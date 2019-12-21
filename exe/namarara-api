@@ -1,0 +1,23 @@
+#!/usr/bin/env ruby
+
+$:.insert(0, 'lib')
+
+require 'namarara'
+require 'json'
+require 'sinatra'
+
+get '/' do
+  <<-EOF
+Bonjour le monde !
+  EOF
+end
+
+post '/single' do
+  json = JSON.parse(request.body.read)
+  expr = json['expr'] || ''
+  vars = json['vars'] || ''
+  puts json.inspect
+  result = Namarara.parse_string(expr, vars, true)
+  JSON.generate(result)
+end
+
