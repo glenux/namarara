@@ -16,7 +16,7 @@ and computes a boolean result from this AST.
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'mm2ep_depend'
+gem 'namarara'
 ```
 
 And then execute:
@@ -25,7 +25,7 @@ And then execute:
 
 Or install it yourself as:
 
-    $ gem install mm2ep_depend
+    $ gem install namarara
 
 ## Usage
 
@@ -33,7 +33,7 @@ Or install it yourself as:
 
 ```
 # Initialize Namarara
-namarara = Namarara.new
+namarara = Namarara::Parser.new(Namarara::Lexer.new)
 
 # Build the binary expression tree (BET)
 namarara_bet = namarara.parse('this AND (that OR other) AND something_else')
@@ -58,7 +58,7 @@ namarara = Namarara::Parser.new(Namarara::Lexer.new)
 
 # A set of rules i want to check
 rules = [
-    {name: 'vulnetable_person', expr: 'is_adult AND is_subordinate'},
+    {name: 'vulnerable_person', expr: 'is_adult AND is_subordinate'},
     {name: 'has_constraints', expr: 'is_adult AND has_children' },
     {name: 'is_child', expr: 'NOT is_adult'}
     # ...
@@ -86,8 +86,7 @@ puts warnings.join("\n")
 else
 puts "Rien à dire :-)"
 end
-
-TODO: Write usage instructions here
+```
 
 ## Development
 
@@ -97,7 +96,7 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/mm2ep_depend.
+Bug reports and pull requests are welcome on GitHub at https://github.com/glenux/namarara
 
 ## License
 

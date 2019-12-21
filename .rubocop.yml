@@ -11,7 +11,7 @@ require: rubocop-rspec
 # Allow bigger test cases ('examples')
 RSpec/ExampleLength:
   Enabled: true
-  Max: 8
+  Max: 10
 
 Metrics/BlockLength:
   Enabled: false

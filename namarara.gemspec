@@ -1,16 +1,16 @@
 # coding: utf-8
 lib = File.expand_path("../lib", __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require 'mm2ep_depend/version'
+require 'namarara/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = 'mm2ep_depend'
-  spec.version       = Mm2epDepend::VERSION
-  spec.authors       = ['Roguelearg']
-  spec.email         = ["torre.brendon@gmail.com"]
+  spec.name          = 'namarara'
+  spec.version       = Namarara::VERSION
+  spec.authors       = ['Brendon Torre', 'Glenn Y. Rolland']
+  spec.email         = ['glenux@glenux.net']
 
-  spec.summary       = %q{A library and tools for expressions}
-  spec.description   = %q{A library and tools for expressions}
+  spec.summary       = %q{A library and tools for parsing boolean expressions}
+  spec.description   = %q{A library and tools for parsing boolean expressions}
   spec.homepage      = 'https://datatransition.net'
   spec.license       = 'MIT'
 
@@ -35,7 +35,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "bundler", "~> 1.15"
   spec.add_development_dependency "rake", "~> 10.0"
   spec.add_development_dependency "minitest", "~> 5.0"
-  spec.add_development_dependency "opal"
+  # spec.add_development_dependency "opal"
   spec.add_development_dependency "pry"
   spec.add_development_dependency "rubocop"
   spec.add_development_dependency "rubocop-rspec"

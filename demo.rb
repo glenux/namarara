@@ -1,9 +1,9 @@
   
 $:.insert(0, 'lib')
-require 'mm2ep_depend'
+require 'namarara'
 
 def verify_input
-  parser = Mm2ep::Depend::Parser.new(Mm2ep::Depend::Lexer.new)
+  parser = Namarara::Parser.new(Namarara::Lexer.new)
 
   # on démarre avec zéro alertes
   warnings = []

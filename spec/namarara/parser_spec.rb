@@ -1,18 +1,18 @@
 require 'spec_helper'
-require 'mm2ep_depend'
+require 'namarara'
 
-describe Mm2ep::Depend::Parser do
+describe Namarara::Parser do
   let(:parser) do
-    Mm2ep::Depend::Parser.new(
-      Mm2ep::Depend::Lexer.new
-    )
+    Namarara::Parser.new(Namarara::Lexer.new)
   end
 
   it 'has to report var which is not defined' do
     line = 'character = true'
     parser.names = {}
     token = parser.parse(line)
-    errors = token.errors.select { |el| el.is_a? Mm2ep::Depend::VarNotDefined }
+    errors = token.errors.select do |el|
+      el.is_a? Namarara::Errors::VarNotDefined
+    end
     errors.size.must_equal 1
     errors[0].var.must_equal 'character'
   end
@@ -21,7 +21,9 @@ describe Mm2ep::Depend::Parser do
     line = 'a_girl_has_no_name AND character'
     parser.names = {}
     token = parser.parse(line)
-    errors = token.errors.select { |el| el.is_a? Mm2ep::Depend::VarNotDefined }
+    errors = token.errors.select do |el|
+      el.is_a? Namarara::Errors::VarNotDefined
+    end
     errors.size.must_equal 2
     errors[0].var.must_equal 'a_girl_has_no_name'
     errors[1].var.must_equal 'character'
@@ -34,7 +36,7 @@ describe Mm2ep::Depend::Parser do
     token = parser.parse(line)
     parser.check_grammar line, token
     token.errors.select do |elem|
-      elem.is_a? Mm2ep::Depend::InvalidGrammar
+      elem.is_a? Namarara::Errors::InvalidGrammar
     end.size.must_equal 1
   end
 

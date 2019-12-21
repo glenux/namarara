@@ -1,9 +1,9 @@
 require 'spec_helper'
-require 'mm2ep_depend'
+require 'namarara'
 
-describe Mm2ep::Depend::Lexer do
+describe Namarara::Lexer do
   let(:lexer) do
-    Mm2ep::Depend::Lexer.new
+    Namarara::Lexer.new
   end
 
   it 'has to recognize AND operator' do

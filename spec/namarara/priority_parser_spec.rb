@@ -1,9 +1,9 @@
 require 'spec_helper'
-require 'mm2ep_depend'
+require 'namarara'
 
-describe Mm2ep::Depend::Parser do
+describe Namarara::Parser do
   let(:parser) do
-    Mm2ep::Depend::Parser.new(Mm2ep::Depend::Lexer.new)
+    Namarara::Parser.new(Namarara::Lexer.new)
   end
 
   it 'has to do not before or' do
