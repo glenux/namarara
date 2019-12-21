@@ -1,1 +1,0 @@
-NOT true OR NOT true
