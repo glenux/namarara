@@ -4,6 +4,8 @@ require: rubocop-rspec
 ## TEMPORARILY disabled 
 ##
 
+AllCops:
+  TargetRubyVersion: 2.5
 
 ##
 ## LOCAL PREFERENCES
@@ -13,9 +15,13 @@ RSpec/ExampleLength:
   Enabled: true
   Max: 10
 
+Metrics/MethodLength:
+  Enabled: true
+  Max: 10
+
 Metrics/BlockLength:
   Enabled: false
-  Exclude: 
+  Exclude:
     - spec/**/*
 
 Metrics/AbcSize:
