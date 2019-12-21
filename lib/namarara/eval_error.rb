@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Namarara
   class EvalError
     attr_accessor :var

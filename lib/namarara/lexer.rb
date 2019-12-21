@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Namarara
   class Lexer < Rly::Lex
     attr_reader :logger
@@ -27,11 +29,9 @@ module Namarara
     end
 
     on_error do |t|
-      unless t.lexer.logger.nil?
-        t.lexer.logger.error "Illegal character #{t.value}"
-      end
+      t.lexer.logger&.error "Illegal character #{t.value}"
       t.lexer.pos += 1
       nil
     end
-  end # class
-end # module
+  end
+end
