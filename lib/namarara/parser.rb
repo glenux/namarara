@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Namarara
   class TreeExpr
     def compute
@@ -23,6 +25,7 @@ module Namarara
       @value = true if value =~ /^true$/i
       @value = false if value =~ /^false$/i
       return unless @value.nil?
+
       @errors << Errors::VarNotDefined.new(
         message: "No value for #{@name}",
         var: @name
@@ -104,7 +107,9 @@ module Namarara
     end
 
     def compute
-      @lval.compute && @rval.compute
+      # rubocop:disable Style/DoubleNegation
+      !!@lval.compute && !!@rval.compute
+      # rubocop:enable Style/DoubleNegation
     end
 
     def to_s
@@ -124,7 +129,9 @@ module Namarara
     end
 
     def compute
-      @lval.compute || @rval.compute
+      # rubocop:disable Style/DoubleNegation
+      !!@lval.compute || !!@rval.compute
+      # rubocop:enable Style/DoubleNegation
     end
 
     def to_s
@@ -182,11 +189,13 @@ module Namarara
       expr = line.split(/=|AND|OR/)
       return if grammar.size == expr.size
       return if grammar.empty?
+
       tokens.errors << Errors::InvalidGrammar.new(
         message: 'Invalid Grammar'
       )
     end
 
+    precedence :left, :VAR
     precedence :left, :OR_OP
     precedence :left, :AND_OP
     precedence :left, :EQ_OP
@@ -197,13 +206,6 @@ module Namarara
       st.value = e.value
     end
 
-    rule 'expr : VAR' do |ex, l|
-      ex.value = EqOp.new(
-        VarValue.new(l.value, @names[l.value]),
-        BoolValue.new('true')
-      )
-    end
-
     rule 'bool_expr : F_BOOL' do |ex, l|
       ex.value = l.value
     end
@@ -212,16 +214,41 @@ module Namarara
       ex.value = l.value
     end
 
+    rule 'expr : VAR' do |ex, l|
+      ex.value = VarValue.new(l.value.to_s, @names[l.value.to_s])
+    end
+
     rule 'expr : bool_expr' do |ex, l|
-      ex.value = BoolValue.new(l.value.to_s)
+      ex.value = BoolValue.new(l.value)
+    end
+
+    rule 'expr : STRING' do |ex, l|
+      ex.value = StringValue.new(l.value)
+    end
+
+    rule 'expr : NUMBER' do |ex, l|
+      ex.value = NumberValue.new(l.value)
     end
 
     rule 'expr : expr OR_OP expr' do |ex, l, _e, r|
-      ex.value = OrOp.new(l.value, r.value)
+      ex.value = OrOp.new(
+        l.value,
+        r.value
+      )
     end
 
     rule 'expr : expr AND_OP expr' do |ex, l, _e, r|
-      ex.value = AndOp.new(l.value, r.value)
+      ex.value = AndOp.new(
+        l.value,
+        r.value
+      )
+    end
+
+    rule 'expr : expr EQ_OP expr' do |ex, v, _eq, n|
+      ex.value = EqOp.new(
+        v.value,
+        n.value
+      )
     end
 
     rule 'expr : L_PAR expr R_PAR' do |ex, _l, e, _r|
@@ -232,25 +259,25 @@ module Namarara
       ex.value = NotOp.new(e.value)
     end
 
-    rule 'expr : VAR EQ_OP bool_expr' do |ex, v, _eq, n|
-      ex.value = EqOp.new(
-        VarValue.new(v.value.to_s, @names[v.value]),
-        BoolValue.new(n.value)
-      )
-    end
+    # rule 'expr : VAR EQ_OP bool_expr' do |ex, v, _eq, n|
+    #   ex.value = EqOp.new(
+    #     VarValue.new(v.value.to_s, @names[v.value.to_s]),
+    #     BoolValue.new(n.value)
+    #   )
+    # end
 
-    rule 'expr : VAR EQ_OP STRING' do |ex, v, _eq, n|
-      ex.value = EqOp.new(
-        VarValue.new(v.value.to_s, @names[v.value]),
-        StringValue.new(n.value)
-      )
-    end
+    # rule 'expr : VAR EQ_OP STRING' do |ex, v, _eq, n|
+    #   ex.value = EqOp.new(
+    #     VarValue.new(v.value.to_s, @names[v.value.to_s]),
+    #     StringValue.new(n.value)
+    #   )
+    # end
 
-    rule 'expr : VAR EQ_OP NUMBER' do |ex, v, _eq, n|
-      ex.value = EqOp.new(
-        VarValue.new(v.value.to_s, @names[v.value]),
-        NumberValue.new(n.value)
-      )
-    end
-  end # class
-end # module
+    # rule 'expr : VAR EQ_OP NUMBER' do |ex, v, _eq, n|
+    #   ex.value = EqOp.new(
+    #     VarValue.new(v.value.to_s, @names[v.value.to_s]),
+    #     NumberValue.new(n.value)
+    #   )
+    # end
+  end
+end
