@@ -21,70 +21,76 @@ gem 'namarara'
 
 And then execute:
 
-    $ bundle
+```shell-session
+$ bundle
+```
 
 Or install it yourself as:
 
-    $ gem install namarara
+```shell-session
+$ gem install namarara
+```
 
 ## Usage
 
 ### Evaluate a single expression
 
-```
+```ruby
+require 'namarara'
+
 # Initialize Namarara
 namarara = Namarara::Parser.new(Namarara::Lexer.new)
 
-# Build the binary expression tree (BET)
-namarara_bet = namarara.parse('this AND (that OR other) AND something_else')
-
 # Prepare variables 
-variables = {
-  this: true,
-  that: false,
-  other: false,
-  something_else: true
+namarara.names = {
+  this: 'true',
+  that: 'false',
+  other: 'false',
+  something_else: 'true'
 }
 
+# Build a binary expression tree (aka BET) from string
+# and inject values
+exp_tree = namarara.parse('this AND (that OR other) AND something_else')
+
 # Compute tree with variables
-result = namarara_bet.compute(variables)
+result = exp_tree.compute
+puts result # = false
 ```
 
 ### Evaluating a set of rules
 
 ```ruby
+require 'namarara'
+
 # Initialize Namarara
 namarara = Namarara::Parser.new(Namarara::Lexer.new)
 
-# A set of rules i want to check
-rules = [
-    {name: 'vulnerable_person', expr: 'is_adult AND is_subordinate'},
-    {name: 'has_constraints', expr: 'is_adult AND has_children' },
-    {name: 'is_child', expr: 'NOT is_adult'}
+# A set of rules i want to check 
+# (in this example we are looking for sensitive personnal data)
+rules = {
+    vulnerable_person: 'is_adult AND is_subordinate',
+    has_constraints: 'is_adult AND has_children',
+    is_child: 'NOT is_adult'
     # ...
-]
+}
 
-# A set of values i want to inject (values can come from HTTP or from database
-# as long as they are expressed as strings)
+# A set of values i want to inject (values must be expressed as strings)
 namarara.names = {
     "is_adult" => 'false', 
     "is_subordinate" => 'true',
     "has_children" => 'true'
 }
 
-rules.map do |rule|
-    namarara_bet = namarara.parse(rule)
-    result = namarara_bet.compute
-    if result then
-        warnings << "Rule #{rule} is true"
-    end
-end
+results = rules.map { |rule, expr| [rule, namarara.parse(expr).compute] }
 
-if not warnings.empty?
-puts "Attention: vous collectez des DCP de personnes vulnerables"
-puts warnings.join("\n")
+if results.select{ |rule, value| value }.empty?
+    puts "Perfect! Nothing to say ;-)"
 else
-puts "Rien à dire :-)"
+    puts "Warning: you are collectif sensitive personnal data !"
+    results.each do |rule, value|
+      puts "#{value ? '>>':'  '} #{rule}: #{value}" 
+    end
 end
 ```
 
