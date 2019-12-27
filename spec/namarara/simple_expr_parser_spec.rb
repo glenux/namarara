@@ -17,24 +17,28 @@ describe Namarara::Parser do
 
   it 'has to find true boolean and compute it to expr' do
     line = 'true'
+    parser.names = {}
     token = parser.parse(line)
     assert_equal(true, token.compute)
   end
 
   it 'has to find false boolean and compute it to expr' do
     line = 'false'
+    parser.names = {}
     token = parser.parse(line)
     assert_equal(false, token.compute)
   end
 
   it 'has to find parenthesis expr and compute it to expr' do
     line = '( true )'
+    parser.names = {}
     token = parser.parse(line)
     assert_equal(true, token.compute)
   end
 
   it 'has to apply not on expr' do
     line = 'NOT true'
+    parser.names = {}
     token = parser.parse(line)
     assert_equal(false, token.compute)
   end
@@ -166,6 +170,29 @@ describe Namarara::Parser do
     parser.names = {
       'a_girl_has_no_name' => 3,
       'character' => 1
+    }
+    token = parser.parse(line)
+    assert_equal(true, token.compute)
+  end
+
+  it 'cannot parse before setting names' do
+    line = 'multi_face_god AND character'
+
+    assert_raises Namarara::Parser::MissingNamesError do
+      token = parser.parse(line)
+      parser.names = {
+        'multi_face_god' => 3,
+        'character' => 1
+      }
+      assert_equal(true, token.compute)
+    end
+  end
+
+  it 'can set names before parsing' do
+    line = 'a_girl_has_no_name AND multi_face_god'
+    parser.names = {
+      'a_girl_has_no_name' => 3,
+      'multi_face_god' => 1
     }
     token = parser.parse(line)
     assert_equal(true, token.compute)

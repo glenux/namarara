@@ -181,7 +181,21 @@ module Namarara
   # 8< ---- 8< ---- ...
 
   class Parser < Rly::Yacc
+    class MissingNamesError < RuntimeError; end
     attr_writer :names
+
+    # Initialize names hash
+    def initialize(*args)
+      @names = nil
+      super(*args)
+    end
+
+    # Make sure names are filled in
+    def parse(str)
+      raise MissingNamesError if @names.nil?
+
+      super(str)
+    end
 
     # Check if grammar is valid
     def check_grammar(line, tokens)

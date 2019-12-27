@@ -10,12 +10,14 @@ describe Namarara::Parser do
 
   it 'has to do not before or' do
     line = 'NOT true OR NOT true'
+    parser.names = {}
     token = parser.parse(line)
     assert_equal('( NOT ( bool:true ) ) OR ( NOT ( bool:true ) )', token.to_s)
   end
 
   it 'has to do not before and' do
     line = 'NOT false AND NOT false'
+    parser.names = {}
     token = parser.parse(line)
     assert_equal(
       '( NOT ( bool:false ) ) AND ( NOT ( bool:false ) )',
@@ -25,6 +27,7 @@ describe Namarara::Parser do
 
   it 'has to do and before or' do
     line = 'false OR true AND false'
+    parser.names = {}
     token = parser.parse(line)
     assert_equal(
       '( bool:false ) OR ( ( bool:true ) AND ( bool:false ) )',
@@ -34,6 +37,7 @@ describe Namarara::Parser do
 
   it 'has to do and before or operators' do
     line = 'false OR false AND true OR true'
+    parser.names = {}
     token = parser.parse(line)
     assert_equal(
       '( ( bool:false ) OR ( ( bool:false ) '\
