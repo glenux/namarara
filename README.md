@@ -1,15 +1,9 @@
 # Namarara
 
-Namarara is a library that parses boolean expressions, builds an [binary
-expression tree](https://en.wikipedia.org/wiki/Binary_expression_tree). 
-
-Namare can also evalutes a result from a set of values corresponding the
-variables used within the boolean expression.
-
-
-2. binary expression 
-and computes a boolean result from this AST.
-
+Namarara is a library that can parses boolean expressions, builds an [binary
+expression tree](https://en.wikipedia.org/wiki/Binary_expression_tree) and
+evalutes a result given a set of values associated to the variables used within
+the boolean expression.
 
 ## Installation
 
