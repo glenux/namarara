@@ -2,6 +2,7 @@
 
 ![Build](https://github.com/glenux/namarara/workflows/build/badge.svg?branch=master)
 [![Gem Version](https://badge.fury.io/rb/namarara.svg)](https://rubygems.org/gems/namarara)
+[![GitHub license](https://img.shields.io/github/license/glenux/namarara.svg)](https://github.com/glenux/namarara/blob/master/LICENSE)
 [![Donate on patreon](https://img.shields.io/badge/patreon-donate-green.svg)](https://patreon.com/glenux)
 
 Namarara is a library that can parses boolean expressions, builds an [binary
