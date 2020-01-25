@@ -86,7 +86,7 @@ results = rules.map { |rule, expr| [rule, namarara.parse(expr).compute] }
 if results.select{ |rule, value| value }.empty?
     puts "Perfect! Nothing to say ;-)"
 else
-    puts "Warning: you are collectif sensitive personnal data !"
+    puts "Warning: you are collecting sensitive personnal data !"
     results.each do |rule, value|
       puts "#{value ? '>>':'  '} #{rule}: #{value}" 
     end
