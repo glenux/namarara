@@ -1,5 +1,5 @@
 ---
-name: Ruby Gem
+name: build
 
 on:
   pull_request:

@@ -1,7 +1,8 @@
 # Namarara
 
-![Ruby Gem](https://github.com/glenux/namarara/workflows/Ruby%20Gem/badge.svg?branch=master)
-![Gem Version](https://badge.fury.io/rb/namarara.svg)
+![Build](https://github.com/glenux/namarara/workflows/build/badge.svg?branch=master)
+[![Gem Version](https://badge.fury.io/rb/namarara.svg)](https://rubygems.org/gems/namarara)
+[![Donate on patreon](https://img.shields.io/badge/patreon-donate-green.svg)](https://patreon.com/glenux)
 
 Namarara is a library that can parses boolean expressions, builds an [binary
 expression tree](https://en.wikipedia.org/wiki/Binary_expression_tree) and
