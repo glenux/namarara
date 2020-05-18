@@ -1,4 +1,5 @@
-# Namarara
+
+# <img src="doc/logo-paths.svg" width="50%" style="display: block; margin: 0 auto;" alt="Namarara" />
 
 ![Build](https://github.com/glenux/namarara/workflows/build/badge.svg?branch=master)
 [![Gem Version](https://badge.fury.io/rb/namarara.svg)](https://rubygems.org/gems/namarara)
